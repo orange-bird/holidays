@@ -69,7 +69,7 @@ namespace Holidays.Nager.Date
         {
             public IReadOnlyCollection<CountryHoliday> Holidays { get; set; }
 
-            public DateTime Added { get; } = new DateTime();
+            public DateTime Added { get; } = DateTime.UtcNow;
         }
     }
 }
