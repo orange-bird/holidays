@@ -51,7 +51,7 @@ namespace Holidays.Api.Controllers
         /// <response code="200">Country code with holidays count</response>
         /// <response code="400">Provided data was incorrect</response>
         [HttpGet]
-        [Route("{year}")]
+        [Route("{year}/most-holidays/country")]
         [OpenApiTag(TagName)]
         [ProducesResponseType(typeof(CountrySummary), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -69,7 +69,7 @@ namespace Holidays.Api.Controllers
         /// <response code="200">Month with holidays count and list of countries having these holidays</response>
         /// <response code="400">Provided data was incorrect</response>
         [HttpGet]
-        [Route("{year}")]
+        [Route("{year}/most-holidays/month")]
         [OpenApiTag(TagName)]
         [ProducesResponseType(typeof(MonthSummary), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
@@ -78,6 +78,24 @@ namespace Holidays.Api.Controllers
             _logger.LogInformation($"Get month with maximum number of holidays in {year}.");
 
             var result = await _service.GetMonthWithMostHolidaysAsync(year, cancellationToken);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Returns country with the most unique holidays in selected year.
+        /// </summary>
+        /// <response code="200">Country code with holidays count</response>
+        /// <response code="400">Provided data was incorrect</response>
+        [HttpGet]
+        [Route("{year}/most-unique-holidays/country")]
+        [OpenApiTag(TagName)]
+        [ProducesResponseType(typeof(CountrySummary), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetCountryWithMostUniqueHolidaysAsync(int year, CancellationToken cancellationToken)
+        {
+            _logger.LogInformation($"Get month with maximum number of holidays in {year}.");
+
+            var result = await _service.GetCountryWithMostUniqueHolidaysAsync(year, cancellationToken);
             return Ok(result);
         }
     }
