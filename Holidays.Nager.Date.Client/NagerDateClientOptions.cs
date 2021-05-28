@@ -38,5 +38,10 @@ namespace Holidays.Nager.Date
             "VA", "VE",
             "ZA"
         };
+
+        /// <summary>
+        /// Maximum number of simultaneous requests to API
+        /// </summary>
+        public int MaxRequestParallelism { get; set; } = 10;
     }
 }

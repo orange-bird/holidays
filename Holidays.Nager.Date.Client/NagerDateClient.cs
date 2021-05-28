@@ -15,18 +15,21 @@ namespace Holidays.Nager.Date
     /// </summary>
     public class NagerDateClient : IHolidaysProvider
     {
-        private const int MaxRequestParallelism = 5;
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(MaxRequestParallelism, MaxRequestParallelism);
-
         private readonly HttpClient _httpClient;
         private readonly Uri _apiEndpoint;
+        private readonly int _maxRequestParallelism = 5;
         private readonly string[] _supportedCountryCodes;
+
+        private readonly SemaphoreSlim _semaphore;
 
         public NagerDateClient(HttpClient httpClient, NagerDateClientOptions options)
         {
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             _apiEndpoint = options?.ApiEndpoint ?? throw new ArgumentNullException(nameof(options));
             _supportedCountryCodes = options.SupportedCountries;
+
+            _maxRequestParallelism = options.MaxRequestParallelism;
+            _semaphore = new SemaphoreSlim(_maxRequestParallelism, _maxRequestParallelism);
         }
 
         /// <inheritdoc/>
@@ -45,6 +48,9 @@ namespace Holidays.Nager.Date
                     HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false))
                 {
                     response.EnsureSuccessStatusCode();
+
+                    if (response.Content == null)
+                        return new CountryHoliday[0];
 
                     using (var contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false))
                     {

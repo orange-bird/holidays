@@ -26,13 +26,13 @@ namespace Holidays.Services.Tests
         [TestCase(0)]
         [TestCase(-100)]
         [TestCase(1999)]
-        public void GetCustomers_ShouldThrow_OnUnsupportedYear(int year)
+        public void GetCountryWithMostHolidays_ShouldThrow_OnUnsupportedYear(int year)
         {
             Assert.ThrowsAsync<BadArgumentException>(async () => await Service.GetCountryWithMostHolidaysAsync(year, CancellationToken.None));
         }
 
         [Test]
-        public void GetCustomer_ShouldThrow_OnUnsupportedCountry()
+        public void GetHolidays_ShouldThrow_OnUnsupportedCountry()
         {
             _providerMock.Setup(x => x.GetSupportedCountries()).Returns(new string[0]);
             Assert.ThrowsAsync<BadArgumentException>(async () => await Service.GetHolidaysAsync(DateTime.UtcNow.Year, "XX", CancellationToken.None));
