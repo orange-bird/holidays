@@ -26,7 +26,7 @@ namespace Holidays.Nager.Date
         {
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             _apiEndpoint = options?.ApiEndpoint ?? throw new ArgumentNullException(nameof(options));
-            _supportedCountryCodes = options.SupportedCountries;
+            _supportedCountryCodes = options.SupportedCountries?.Select(x => x.ToUpper()).ToArray() ?? new string[0];
 
             _maxRequestParallelism = options.MaxRequestParallelism;
             _semaphore = new SemaphoreSlim(_maxRequestParallelism, _maxRequestParallelism);
@@ -80,6 +80,15 @@ namespace Holidays.Nager.Date
         public string[] GetSupportedCountries()
         {
             return _supportedCountryCodes;
+        }
+
+        /// <inheritdoc/>
+        public bool IsCountrySupported(string countryCode)
+        {
+            if (string.IsNullOrEmpty(countryCode))
+                throw new ArgumentException("Country code should not be empty", nameof(countryCode));
+
+            return _supportedCountryCodes.Contains(countryCode.ToUpper());
         }
     }
 }

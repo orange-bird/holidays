@@ -18,5 +18,10 @@ namespace Holidays.Contracts
         /// Returns list of supported country codes.
         /// </summary>
         string[] GetSupportedCountries();
+
+        /// <summary>
+        /// Returns whether specified country code is supported.
+        /// </summary>
+        bool IsCountrySupported(string countryCode);
     }
 }

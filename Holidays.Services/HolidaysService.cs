@@ -28,7 +28,7 @@ namespace Holidays.Services
             if (year < minimalSupportedYear)
                 throw new BadArgumentException($"Supported year is from {minimalSupportedYear}.", nameof(year)) { ParamValue = year.ToString() };
 
-            if (_provider.GetSupportedCountries().Contains(countryCode) != true)
+            if (!_provider.IsCountrySupported(countryCode))
                 throw new BadArgumentException($"Country code {countryCode} is not supported", nameof(year)) { ParamValue = year.ToString() };
 
             var holidays = await _provider.GetHolidaysAsync(year, countryCode, cancellationToken).ConfigureAwait(false);
@@ -99,7 +99,11 @@ namespace Holidays.Services
             if (year < minimalSupportedYear)
                 throw new BadArgumentException($"Supported year is from {minimalSupportedYear}.", nameof(year)) { ParamValue = year.ToString() };
 
-            var tasks = _provider.GetSupportedCountries().Select(x => _provider.GetHolidaysAsync(year, x, cancellationToken)).ToArray();
+            var supportedCountries = _provider.GetSupportedCountries() ?? new string[0];
+            if (supportedCountries.Length == 0)
+                return new CountryHoliday[0];
+
+            var tasks = supportedCountries.Select(x => _provider.GetHolidaysAsync(year, x, cancellationToken)).ToArray();
             await Task.WhenAll(tasks).ConfigureAwait(false);
 
             var result = new List<CountryHoliday>();

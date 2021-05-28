@@ -54,6 +54,12 @@ namespace Holidays.Nager.Date
             return _client.GetSupportedCountries();
         }
 
+        /// <inheritdoc/>
+        public bool IsCountrySupported(string countryCode)
+        {
+            return _client.IsCountrySupported(countryCode);
+        }
+
         private static bool IsExpired(CachedHolidays cached)
         {
             return cached.Added.Add(_cachePeriod) < DateTime.UtcNow;
