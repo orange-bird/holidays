@@ -1,3 +1,4 @@
+using System.Net.Http;
 using Holidays.Contracts;
 using Holidays.Nager.Date;
 using Holidays.Services;
@@ -22,6 +23,7 @@ namespace Holidays.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<HttpClient>();
             services.AddSingleton<NagerDateClientOptions>();
             services.AddSingleton<NagerDateClient>();
             services.AddSingleton<IHolidaysProvider, NagerDateCachedClient>();
