@@ -68,6 +68,22 @@ namespace Holidays.Nager.Date.Tests
             Console.WriteLine($"Maximum {maximum} of {MaxRequests} simultaneous requests was reached");
         }
 
+        [Test]
+        public async Task GetHolidays_ShouldCorrectlyDeserialize()
+        {
+            const string responseText = "[{\"date\":\"2021-01-01\",\"localName\":\"Новый год\",\"name\":\"New Year's Day\",\"countryCode\":\"RU\",\"fixed\":true,\"global\":true,\"counties\":null,\"launchYear\":null,\"types\":[\"Public\"]}]";
+            _handlerMock
+                .Setup(x => x.SendAsync(It.IsAny<HttpRequestMessage>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(responseText) });
+
+            var holidays = await _client.GetHolidaysAsync(2021, "RU", CancellationToken.None);
+            Assert.AreEqual(1, holidays.Count);
+
+            var holiday = holidays.First();
+            Assert.AreEqual(2021, holiday.Date.Year);
+            Assert.AreEqual("New Year's Day", holiday.Name);
+        }
+
         public static int InterlockedMax(ref int location, int value)
         {
             int initialValue, newValue;
